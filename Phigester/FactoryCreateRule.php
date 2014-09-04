@@ -18,66 +18,70 @@ namespace Phigester;
  */
 class FactoryCreateRule extends \Phigester\AbstractRule
 {
-  /**
-   * The object creation factory we will use to instantiate objects as required
-   * based on the attributes specified in the matched XML element.
-   *
-   * @var \Phigester\ObjectCreationFactory
-   */
-  protected $creationFactory = null;
+    /**
+     * The object creation factory we will use to instantiate objects as required
+     * based on the attributes specified in the matched XML element.
+     *
+     * @var \Phigester\ObjectCreationFactory
+     */
+    protected $creationFactory = null;
 
-  public function __construct(\Phigester\ObjectCreationFactory $creationFactory)
-  {
-    $this->creationFactory = $creationFactory;
-  }
-
-  /**
-   * Process the beginning of this element.
-   *
-   * @param array $attributes The attribute list of this element
-   * @throws \Exception
-   */
-  public function begin(array $attributes)
-  {
-    try {
-      $instance = $this->creationFactory->createObject($attributes);
-
-      $logger = $this->digester->getLogger();
-      $indentLogger = $this->digester->getIndentLogger();
-      $match = $this->digester->getMatch();
-      $logger->debug($indentLogger . "  [FactoryCreateRule]{" . $match
-          . "} New " . get_class($instance));
-
-      $this->digester->push($instance);
-    } catch (\Exception $exception) {
-      throw $exception;
+    public function __construct(\Phigester\ObjectCreationFactory $creationFactory)
+    {
+        $this->creationFactory = $creationFactory;
     }
-  }
 
-  /**
-   * Process the end of this element
-   */
-  public function end()
-  {
-    $top = $this->digester->pop();
+    /**
+     * Process the beginning of this element.
+     *
+     * @param  array      $attributes The attribute list of this element
+     * @throws \Exception
+     */
+    public function begin(array $attributes)
+    {
+        try {
+            $instance = $this->creationFactory->createObject($attributes);
 
-    $logger = $this->digester->getLogger();
-    $indentLogger = $this->digester->getIndentLogger();
-    $match = $this->digester->getMatch();
-    $logger->debug($indentLogger . "  [FactoryCreateRule]{" . $match
-        . "} Pop " . get_class($top));
-  }
+            $logger = $this->digester->getLogger();
+            $indentLogger = $this->digester->getIndentLogger();
+            $match = $this->digester->getMatch();
+            $logger->debug(
+                $indentLogger . "  [FactoryCreateRule]{" . $match
+                . "} New " . get_class($instance)
+            );
 
-  /**
-   * Render a printable version of this Rule
-   *
-   * @return string
-   */
-  public function toString()
-  {
-    $sb = 'FactoryCreateRule[creationFactory='
-        . get_class($this->creationFactory) . ']';
+            $this->digester->push($instance);
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
+    }
 
-    return $sb;
-  }
+    /**
+     * Process the end of this element
+     */
+    public function end()
+    {
+        $top = $this->digester->pop();
+
+        $logger = $this->digester->getLogger();
+        $indentLogger = $this->digester->getIndentLogger();
+        $match = $this->digester->getMatch();
+        $logger->debug(
+            $indentLogger . "  [FactoryCreateRule]{" . $match
+            . "} Pop " . get_class($top)
+        );
+    }
+
+    /**
+     * Render a printable version of this Rule
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        $sb = 'FactoryCreateRule[creationFactory='
+            . get_class($this->creationFactory) . ']';
+
+        return $sb;
+    }
 }

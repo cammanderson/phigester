@@ -11,34 +11,36 @@ namespace Phigester;
  */
 class ConvertUtils
 {
-  /**
-   * Convert the specified value to a value of the specified primitive type
-   *
-   * @param string $value Value to be converted
-   * @param string $type Primitive type to be converted to
-   * @return mixed The converted value
-   * @throws \Phigester\Exception\ConversionException
-   */
-  public static function convert($value, $type)
-  {
-    $value = (string) $value;
-    $type = strtolower($type);
+    /**
+     * Convert the specified value to a value of the specified primitive type
+     *
+     * @param  string $value Value to be converted
+     * @param  string $type  Primitive type to be converted to
+     * @return mixed The converted value
+     * @throws \Phigester\Exception\ConversionException
+     */
+    public static function convert($value, $type)
+    {
+        $value = (string) $value;
+        $type = strtolower($type);
 
-    if ($type == 'boolean') {
-      $temp = strtolower($value);
-      if ($temp === 'false') {
-        return false;
-      } else {
-        if (!@settype($value, $type))
-          throw new \Phigester\Exception\ConversionException();
+        if ($type == 'boolean') {
+            $temp = strtolower($value);
+            if ($temp === 'false') {
+                return false;
+            } else {
+                if (!@settype($value, $type)) {
+                    throw new \Phigester\Exception\ConversionException();
+                }
 
-        return $value;
-      }
-    } else {
-      if (!@settype($value, $type))
-        throw new \Phigester\Exception\ConversionException();
+                return $value;
+            }
+        } else {
+            if (!@settype($value, $type)) {
+                throw new \Phigester\Exception\ConversionException();
+            }
 
-      return $value;
+            return $value;
+        }
     }
-  }
 }
