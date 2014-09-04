@@ -21,7 +21,7 @@ class Digester extends \Phigester\AbstractExpatParser
      *
      * Most common logging calls.
      *
-     * @var \Psr\Logger\LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     protected $logger = null;
 
@@ -95,7 +95,7 @@ class Digester extends \Phigester\AbstractExpatParser
     }
 
     /**
-     * @return \Psr\Logger\LoggerInterface
+     * @return \Psr\Log\LoggerInterface
      */
     public function getLogger()
     {
