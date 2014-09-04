@@ -9,7 +9,8 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class ConvertUtils {
+class ConvertUtils
+{
   /**
    * Convert the specified value to a value of the specified primitive type
    *
@@ -18,10 +19,11 @@ class ConvertUtils {
    * @return mixed The converted value
    * @throws \Phigester\Exception\ConversionException
    */
-  public static function convert($value, $type) {
+  public static function convert($value, $type)
+  {
     $value = (string) $value;
     $type = strtolower($type);
-    
+
     if ($type == 'boolean') {
       $temp = strtolower($value);
       if ($temp === 'false') {
@@ -29,13 +31,14 @@ class ConvertUtils {
       } else {
         if (!@settype($value, $type))
           throw new \Phigester\Exception\ConversionException();
+
         return $value;
       }
     } else {
       if (!@settype($value, $type))
         throw new \Phigester\Exception\ConversionException();
+
       return $value;
     }
   }
 }
-?>

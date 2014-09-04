@@ -12,7 +12,8 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class RulesBase implements \Phigester\Rules {
+class RulesBase implements \Phigester\RulesInterface
+{
   /**
    * The set of registered Rule instances, keyed by the matching pattern
    *
@@ -44,7 +45,8 @@ class RulesBase implements \Phigester\Rules {
    *
    * @return \Phigester\Digester
    */
-  public function getDigester() {
+  public function getDigester()
+  {
     return $this->digester;
   }
 
@@ -54,9 +56,10 @@ class RulesBase implements \Phigester\Rules {
    * @param \Phigester\Digester $digester The newly associated Digester
    * instance reference
    */
-  public function setDigester(\Phigester\Digester $digester) {
+  public function setDigester(\Phigester\Digester $digester)
+  {
     $this->digester = $digester;
-    
+
     foreach ($this->rules as $rule) {
       $rule->setDigester($digester);
     }
@@ -66,18 +69,19 @@ class RulesBase implements \Phigester\Rules {
    * Register a new Rule instance matching the specified pattern
    *
    * @param string $pattern The nesting pattern to be matched for this Rule
-   * @param \Phigester\Rule $rule The Rule instance to be registered
+   * @param \Phigester\AbstractRule $rule The Rule instance to be registered
    */
-  public function add($pattern, \Phigester\Rule $rule) {
+  public function add($pattern, \Phigester\AbstractRule $rule)
+  {
     $pattern = (string) $pattern;
     //To help users who accidently add '/' to the end of their patterns
     if (strlen($pattern) > 1 && substr($pattern, -1) == '/') {
       $pattern = substr($pattern, 0, -1);
     }
-        
+
     $this->cache[$pattern][] = $rule;
     $this->rules[] = $rule;
-    
+
     if (!is_null($this->digester)) {
       $rule->setDigester($this->digester);
     }
@@ -86,7 +90,8 @@ class RulesBase implements \Phigester\Rules {
   /**
    * Clear all existing Rule instance registrations.
    */
-  public function clear() {
+  public function clear()
+  {
     $this->cache = array();
     $this->rules = array();
   }
@@ -102,7 +107,8 @@ class RulesBase implements \Phigester\Rules {
    * @param string $pattern The nesting pattern to be matched
    * @return array
    */
-  public function match($pattern) {   
+  public function match($pattern)
+  {
     $rules = $this->lookup($pattern);
 
     if (is_null($rules)) {
@@ -112,7 +118,7 @@ class RulesBase implements \Phigester\Rules {
       foreach ($keys as $key) {
         if (substr($key, 0, 2) == '*/') {
           $lenKey = strlen(substr($key, 1));
-          
+
           if ($pattern == substr($key, 2)
               || substr($pattern, -$lenKey) == substr($key, 1)) {
             if (strlen($key) > strlen($longKey)) {
@@ -126,6 +132,7 @@ class RulesBase implements \Phigester\Rules {
     if (is_null($rules)) {
       $rules = array();
     }
+
     return $rules;
   }
 
@@ -139,7 +146,8 @@ class RulesBase implements \Phigester\Rules {
    *
    * @return array
    */
-  public function rules() {
+  public function rules()
+  {
     return $this->rules;
   }
 
@@ -151,15 +159,16 @@ class RulesBase implements \Phigester\Rules {
    * @param string $pattern The pattern to be matched
    * @return array
    */
-  protected function lookup($pattern) {
+  protected function lookup($pattern)
+  {
     $pattern = (string) $pattern;
-    
+
     if (array_key_exists($pattern, $this->cache)) {
       $rules = $this->cache[$pattern];
     } else {
       return null;
     }
+
     return $rules;
   }
 }
-?>

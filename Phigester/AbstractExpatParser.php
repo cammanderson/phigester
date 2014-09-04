@@ -16,29 +16,32 @@ namespace Phigester;
  * @author Yannick Lecaillez <yl@seasonfive.com>
  * @author Andreas Aderhold <andi@binarycloud.com>
  */
-abstract class AbstractExpatParser extends \Phigester\AbstractXMLParser {
+abstract class AbstractExpatParser extends \Phigester\AbstractXMLParser
+{
   /**
    * Constructs a new AbstractExpatParser object
    */
-  public function __construct() {
+  public function __construct()
+  {
     $this->createParser();
   }
-  
+
   /**
    * Sets up PHP's internal expat parser and options.
    */
-  private function createParser() {
+  private function createParser()
+  {
     //We need the xml parser to operate in this class
     $this->parser = xml_parser_create();
     xml_set_object($this->parser, $this);
     xml_set_element_handler($this->parser, 'startElementHandler'
         , 'endElementHandler');
     xml_set_character_data_handler($this->parser, 'characterDataHandler');
-    
+
     //Default options
     $this->parserSetOption(XML_OPTION_CASE_FOLDING, false);
   }
- 
+
   /**
    * Starts the parsing process
    *
@@ -48,7 +51,8 @@ abstract class AbstractExpatParser extends \Phigester\AbstractXMLParser {
    * during parsing
    * @throws \Phigester\Exception\IOException - If XML file can not be accessed
    */
-  public function parse($xmlFile) {
+  public function parse($xmlFile)
+  {
     $xmlFile = (string) $xmlFile;
 
     //Check the XML file to be parsed
@@ -90,8 +94,8 @@ abstract class AbstractExpatParser extends \Phigester\AbstractXMLParser {
    * @param mixed $val The value to set
    * @return boolean True if the option could be set, otherwise false
    */
-  public function parserSetOption($opt, $val) {
+  public function parserSetOption($opt, $val)
+  {
     return xml_parser_set_option($this->parser, $opt, $val);
   }
 }
-?>

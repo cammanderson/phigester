@@ -11,7 +11,8 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class SetPropertiesRule extends \Phigester\Rule {
+class SetPropertiesRule extends \Phigester\AbstractRule
+{
   /**
    * Attribute names used to override natural attribute->property mapping
    *
@@ -25,7 +26,7 @@ class SetPropertiesRule extends \Phigester\Rule {
    * @var array
    */
   private $propertyNames = null;
-  
+
   /**
    * ignoreMissingProperty
    *
@@ -70,7 +71,8 @@ class SetPropertiesRule extends \Phigester\Rule {
    * @param array $attributeNames The names of attributes to map
    * @param array $propertyNames The names of properties mapped to
    */
-  public function __construct(array $attributeNames, array $propertyNames) {
+  public function __construct(array $attributeNames, array $propertyNames)
+  {
     $this->attributeNames = $attributeNames;
     $this->propertyNames = $propertyNames;
   }
@@ -80,23 +82,22 @@ class SetPropertiesRule extends \Phigester\Rule {
    *
    * @param array $attributes The attribute list of this element
    */
-  public function begin($attributes) {
+  public function begin($attributes)
+  {
     $logger = $this->digester->getLogger();
     $indentLogger = $this->digester->getIndentLogger();
     $match = $this->digester->getMatch();
-    
+
     // Build a set of attributes names and corresponding values
     $values  = array();
 
     // Set up variables for custom names mappings
     $propNamesLength = count($this->propertyNames);
 
-    
-    
     // Loop through the xml element attribute names and corresponding values
     foreach ($attributes as $xmlAttribName => $xmlAttribValue) {
       $name = $xmlAttribName;
-      
+
       // We'll now check for custom mappings
       $n = 0;
       foreach ($this->attributeNames as $attributeName) {
@@ -112,17 +113,17 @@ class SetPropertiesRule extends \Phigester\Rule {
         }
         $n++;
       }
-      
+
       $logger->debug($indentLogger . '  [SetPropertiesRule]{' . $match
           . '} Setting property "' . $name . '" to "' . $xmlAttribValue . '"');
-          
+
       if (!$this->ignoreMissingProperty && !is_null($name)) {
         $top = $this->digester->peek();
         $reflection = new \ReflectionClass(get_class($top));
         // Do nothing if the top object is null
         if (!is_null($top)) {
           $property = null;
-          if(property_exists($top, $name)) {
+          if (property_exists($top, $name)) {
         	$property = $reflection->getProperty($name);
           }
           if (!empty($property)) {
@@ -135,7 +136,7 @@ class SetPropertiesRule extends \Phigester\Rule {
           }
         }
       }
-      
+
       if (!is_null($name)) {
         $values[$name] = $xmlAttribValue;
       }
@@ -145,17 +146,17 @@ class SetPropertiesRule extends \Phigester\Rule {
     $top = $this->digester->peek();
     $logger->debug($indentLogger . '  [SetPropertiesRule]{' . $match
         . '} Set ' . get_class($top) . ' properties');
-    
+
     // Do nothing if the top object is null
     if (!is_null($top)) {
       // Build a set of attribute names and corresponding values
       $reflection = new \ReflectionClass(get_class($top));
       foreach ($values as $name => $value) {
       	$reflectionProperty = null;
-      	if(property_exists($top, $name)) {
+      	if (property_exists($top, $name)) {
       		$reflectionProperty = $reflection->getProperty($name);
       	}
-      	if(!empty($reflectionProperty) && $reflectionProperty->isPublic()) {
+      	if (!empty($reflectionProperty) && $reflectionProperty->isPublic()) {
 		  $top->$name = $value;
         } else {
           $propertySetter = 'set' . ucfirst($name);
@@ -172,8 +173,10 @@ class SetPropertiesRule extends \Phigester\Rule {
    *
    * @return string
    */
-  public function toString() {
+  public function toString()
+  {
     $sb  = 'SetPropertiesRule[]';
+
     return $sb;
   }
 
@@ -185,10 +188,11 @@ class SetPropertiesRule extends \Phigester\Rule {
    *
    * @return boolean True if skipping the unmatched attributes
    */
-  public function isIgnoreMissingProperty() {
+  public function isIgnoreMissingProperty()
+  {
     return $this->ignoreMissingProperty;
   }
-  
+
   /**
    * Sets whether attributes found in the xml without matching properties
    * should be ignored
@@ -200,8 +204,8 @@ class SetPropertiesRule extends \Phigester\Rule {
    * @param boolean $ignoreMissingProperty False to stop the parsing on
    * unmatched attributes
    */
-  public function setIgnoreMissingProperty($ignoreMissingProperty) {
+  public function setIgnoreMissingProperty($ignoreMissingProperty)
+  {
     $this->ignoreMissingProperty = (boolean) $ignoreMissingProperty;
   }
 }
-?>

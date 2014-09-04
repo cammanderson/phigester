@@ -10,52 +10,53 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class CallMethodRule extends \Phigester\Rule {
+class CallMethodRule extends \Phigester\AbstractRule
+{
   /**
    * The body text collected from this element
-   * 
+   *
    * @var string
    */
   protected $bodyText = null;
-  
+
   /**
    * Location of the target object for the call, relative to the top of the
    * digester object stack
-   * 
+   *
    * The default value of zero means the target object is the one on top
    * of the stack.
-   * 
+   *
    * @var integer
    */
   protected $targetOffset = 0;
-  
+
   /**
    * The method name to call on the parent object
    *
    * @var string
    */
   protected $methodName = null;
-  
+
   /**
    * The number of parameters to collect from MethodParam rules
-   * 
+   *
    * If this value is zero, a single parameter will be collected from the
    * body of this element.
    *
    * @var integer
    */
   protected $paramCount = 0;
-  
+
   /**
    * The parameter types of the parameters to be collected
    *
    * @var array
    */
   protected $paramTypes = null;
-  
+
   /**
    * Construct a "call method" rule with the specified method name
-   * 
+   *
    * If paramCount is set to zero the rule will use the body of this element
    * as the single argument of the method, unless paramTypes is empty, in this
    * case the rule will call the specified method with no arguments.
@@ -85,7 +86,7 @@ class CallMethodRule extends \Phigester\Rule {
     } else {
       if (empty($paramTypes)) {
         if ($this->paramCount > 0) {
-          $this->paramTypes = array_fill(0, $this->paramCount, 'string');        
+          $this->paramTypes = array_fill(0, $this->paramCount, 'string');
         } else {
           $this->paramTypes = array();
         }
@@ -96,45 +97,48 @@ class CallMethodRule extends \Phigester\Rule {
       }
     }
   }
-  
+
   /**
    * Process the beginning of this element
    *
    * @param array $attributes The attribute list of this element
    * @throws Exception
    */
-  public function begin(array $attributes) {
+  public function begin(array $attributes)
+  {
     //Push an array to capture the parameter values if necessary
     if ($this->paramCount > 0) {
       $parameters = array_fill(0, $this->paramCount, null);
       $this->digester->pushParams($parameters);
     }
   }
-    
+
   /**
    * Process the body text of this element
-   * 
+   *
    * @param string $bodyText The text of the body of this element
    */
-  public function body($bodyText) {
+  public function body($bodyText)
+  {
     if ($this->paramCount == 0) {
       $this->bodyText = trim($bodyText);
     }
   }
-  
+
   /**
    * Process the end of this element
    */
-  public function end() {
+  public function end()
+  {
     $logger = $this->digester->getLogger();
     $indentLogger = $this->digester->getIndentLogger();
     $match = $this->digester->getMatch();
-    
+
     //Retrieve or construct the parameter values array
     $parameters = null;
     if ($this->paramCount > 0) {
       $parameters = $this->digester->popParams();
-      
+
       foreach ($parameters as $i => $parameter) {
         if (is_object($parameter)) {
           $logger->debug($indentLogger . '  [CallMethodRule](' . $i . ')'
@@ -144,7 +148,7 @@ class CallMethodRule extends \Phigester\Rule {
               . $parameter);
         }
       }
-      
+
       //In the case where the target method takes a single parameter
       //and that parameter does not exist (the CallParamRule never
       //executed or the CallParamRule was intended to set the parameter
@@ -162,13 +166,13 @@ class CallMethodRule extends \Phigester\Rule {
       //Having paramCount == 0 and count(paramTypes) == 1 indicates
       //that we have the special case where the target method has one
       //parameter being the body text of the current element.
-      
+
       //There is no body text included in the source XML file, so skip
       //the method call
       if ($this->bodyText == '') {
         return;
       }
-      
+
       $parameters = array($this->bodyText);
     } else {
       //When paramCount is zero and count(paramTypes) is zero it means that
@@ -176,7 +180,7 @@ class CallMethodRule extends \Phigester\Rule {
       //need to be done here.
       ;
     }
-    
+
     //Construct the parameter values array we will need
     try {
       $paramValues = array();
@@ -198,7 +202,7 @@ class CallMethodRule extends \Phigester\Rule {
     } catch (\Phigester\Exception\ConversionException $exception) {
       throw $exception;
     }
-    
+
     //Determine the target object for the method call
     if ($this->targetOffset >= 0) {
       $target = $this->digester->peek($this->targetOffset);
@@ -206,7 +210,7 @@ class CallMethodRule extends \Phigester\Rule {
       $target = $this->digester->peek($this->digester->getCount()
           + $this->targetOffset);
     }
-    
+
     if (is_null($target)) {
       $sb = '[CallMethodRule]{' . $match;
       $sb .= '} Call target is null (';
@@ -215,7 +219,7 @@ class CallMethodRule extends \Phigester\Rule {
       $sb .= ')';
       throw new \Phigester\Exception\ExpatParserException($sb);
     }
-    
+
     //Invoke the required method on the top object
     $sb = $indentLogger . '  [CallMethodRule]{' . $match;
     $sb .= '} Call ' . get_class($target);
@@ -237,7 +241,7 @@ class CallMethodRule extends \Phigester\Rule {
     }
     $sb .= ')';
     $logger->debug($sb);
-    
+
     if (method_exists($target, $this->methodName)) {
       $result = call_user_func_array(array($target, $this->methodName)
           , $paramValues);
@@ -247,23 +251,25 @@ class CallMethodRule extends \Phigester\Rule {
       throw new \Phigester\Exception\NoSuchMethodException($msg);
     }
   }
-  
+
   /**
    * Subclasses may override this method to perform additional processing of
    * the invoked method's result
    *
    * @param mixed $result Result returned by the method invoked, possibly null
    */
-  protected function processMethodCallResult($result) {
+  protected function processMethodCallResult($result)
+  {
     //do nothing
   }
-  
+
   /**
    * Render a printable version of this Rule
-   * 
+   *
    * @return string
    */
-  public function toString() {
+  public function toString()
+  {
     $sb = 'CallMethodRule[';
     $sb .= 'methodName=' . $this->methodName;
     $sb .= ', paramCount=' . $this->paramCount;
@@ -273,7 +279,7 @@ class CallMethodRule extends \Phigester\Rule {
       $sb .= $paramType;
     }
     $sb .= '}]';
+
     return $sb;
   }
 }
-?>

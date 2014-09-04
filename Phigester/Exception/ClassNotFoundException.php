@@ -9,5 +9,6 @@ namespace Phigester\Exception;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class ClassNotFoundException extends \Exception {
+class ClassNotFoundException extends \Exception
+{
 }

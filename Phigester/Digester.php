@@ -14,13 +14,14 @@ namespace Phigester;
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  * @link http://jakarta.apache.org/commons/digester
  */
-class Digester extends \Phigester\AbstractExpatParser {
+class Digester extends \Phigester\AbstractExpatParser
+{
   /**
    * Logging class
    *
    * Most common logging calls.
    *
-   * @var Logger
+   * @var \Psr\Logger\LoggerInterface
    */
   protected $logger = null;
 
@@ -30,7 +31,7 @@ class Digester extends \Phigester\AbstractExpatParser {
    * @var string
    */
   protected $indentLogger = '';
-  
+
   /**
    * The body text of the current element
    *
@@ -54,7 +55,7 @@ class Digester extends \Phigester\AbstractExpatParser {
 
   /**
    * The "root" element of the stack
-   * 
+   *
    * In other words, the last object that was popped.
    *
    * @var object
@@ -72,54 +73,59 @@ class Digester extends \Phigester\AbstractExpatParser {
    * The Rules implementation containing our collection of Rule instances
    * and associated matching policy
    *
-   * @var \Phigester\Rules
+   * @var \Phigester\RulesInterface
    */
   protected $rules = null;
 
   /**
    * The parameters stack being utilized by CallMethodRule
    * and CallParamRule rules
-   * 
+   *
    * @var array
    */
   protected $params = array();
-  
-  public function __construct() {
+
+  public function __construct()
+  {
     //Call the ExpatParser constructor first
     parent::__construct();
 
-    $this->logger = Aloi_Util_Logger_Manager::getLogger(
-        'Phigester.' . __CLASS__);
+//    $this->logger = LoggerManager::getLogger(
+//        'Phigester.' . __CLASS__);
   }
 
   /**
    * @return Logger
    */
-  public function getLogger() {
+  public function getLogger()
+  {
     return $this->logger;
   }
 
   /**
    * @return string
    */
-  public function getIndentLogger() {
+  public function getIndentLogger()
+  {
     return $this->indentLogger;
   }
-  
+
   /**
    * @return string
    */
-  public function getMatch() {
+  public function getMatch()
+  {
     return $this->match;
   }
-  
+
   /**
    * Set the Rules implementation object containing our rules collection
    * and associated matching policy
    *
-   * @param \Phigester\Rules $rules New Rules implementation
+   * @param \Phigester\RulesInterface $rules New Rules implementation
    */
-  public function setRules(\Phigester\Rules $rules) {
+  public function setRules(\Phigester\RulesInterface $rules)
+  {
     $this->rules = $rules;
     $this->rules->setDigester($this);
   }
@@ -131,13 +137,15 @@ class Digester extends \Phigester\AbstractExpatParser {
    * If none has been established, a default implementation will be created
    * and returned.
    *
-   * @return \Phigester\Rules
+   * @return \Phigester\RulesInterface
    */
-  public function getRules() {
+  public function getRules()
+  {
     if (is_null($this->rules)) {
       $this->rules = new \Phigester\RulesBase();
       $this->rules->setDigester($this);
     }
+
     return $this->rules;
   }
 
@@ -147,10 +155,11 @@ class Digester extends \Phigester\AbstractExpatParser {
    *
    * @return object
    */
-  public function getRoot() {
+  public function getRoot()
+  {
     return $this->root;
   }
-  
+
   /**
    * Parse the content of the specified file using this digester
    *
@@ -162,7 +171,8 @@ class Digester extends \Phigester\AbstractExpatParser {
    * during parsing
    * @throws \Phigester\Exception\IOException - If XML file can not be accessed
    */
-  public function parse($xmlFile) {
+  public function parse($xmlFile)
+  {
     $this->logger->debug('---------- START PARSING "' . $xmlFile
         . '" ----------');
     try {
@@ -174,7 +184,7 @@ class Digester extends \Phigester\AbstractExpatParser {
     }
     $this->logger->debug('---------- END PARSING "' . $xmlFile
         . '" ----------');
-    
+
     return $this->root;
   }
 
@@ -185,30 +195,31 @@ class Digester extends \Phigester\AbstractExpatParser {
    * @param string $name Name of the current xml element being processed
    * @param array $attribs An array of attributes for the current xml element
    * being processed
-   * @throws Exception
+   * @throws \Exception
    */
-  public function startElementHandler($parser, $name, $attribs) {
+  public function startElementHandler($parser, $name, $attribs)
+  {
     if ($this->match != '') $this->indentLogger .= str_repeat(' ', 4);
-    $this->logger->debug($this->indentLogger . 'startElement(' . $name . ')');    
+    $this->logger->debug($this->indentLogger . 'startElement(' . $name . ')');
     $this->logger->debug($this->indentLogger . '  Pushing body text "'
         . $this->bodyText . '"');
-    
+
     // Save the body text accumulated for our surrounding element
     $this->bodyTexts[] = $this->bodyText;
     $this->bodyText = '';
-    
+
     // Compute the current matching rule
     $sb = $this->match;
     if ($sb != '') $sb .= '/';
     $sb .= $name;
     $this->match = $sb;
-    
+
     $this->logger->debug($this->indentLogger . '  New match="' . $this->match
         . '"');
 
     // Fire "begin" events for all relevant rules
     $rules = $this->getRules()->match($this->match);
-    
+
     if (count($rules) > 0) {
       foreach ($rules as $rule) {
         $this->logger->debug($this->indentLogger . '  Fire begin() for '
@@ -216,7 +227,7 @@ class Digester extends \Phigester\AbstractExpatParser {
 
         try {
           $rule->begin($attribs);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
           $this->logger->error('Begin event threw exception : '
               . $exception->getMessage());
           throw $exception;
@@ -235,10 +246,11 @@ class Digester extends \Phigester\AbstractExpatParser {
    * @param object $parser The XML parser object
    * @param string $data The characters from the XML element body
    */
-  public function characterDataHandler($parser, $data) {
+  public function characterDataHandler($parser, $data)
+  {
     $data = trim($data);
 
-    if ($data != '')  {
+    if ($data != '') {
       $this->logger->debug($this->indentLogger . 'characters(' . $data. ')');
     }
 
@@ -251,9 +263,10 @@ class Digester extends \Phigester\AbstractExpatParser {
    *
    * @param object $parser The XML parser object
    * @param string $name Name of the current xml element being processed
-   * @throws Exception
+   * @throws \Exception
    */
-  public function endElementHandler($parser, $name) {
+  public function endElementHandler($parser, $name)
+  {
     $this->logger->debug($this->indentLogger . '  match="'
         . $this->match . '"');
     $this->logger->debug($this->indentLogger . '  bodyText="'
@@ -262,13 +275,13 @@ class Digester extends \Phigester\AbstractExpatParser {
     // Fire 'body' events for all relevant rules
     $rules = $this->getRules()->match($this->match);
     if (count($rules) > 0) {
-      foreach($rules as $rule) {
+      foreach ($rules as $rule) {
         $this->logger->debug($this->indentLogger . '  Fire body() for '
             . $rule->toString());
 
         try {
           $rule->body($this->bodyText);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
           $this->logger->error('Body event threw exception'
               , $exception->getMessage());
           throw $exception;
@@ -278,7 +291,7 @@ class Digester extends \Phigester\AbstractExpatParser {
       $this->logger->debug($this->indentLogger . '  No rules found matching "'
           . $this->match . '"');
     }
-        
+
     $this->logger->debug($this->indentLogger . 'endElement(' . $name . ')');
 
     // Recover the body text from the surrounding element
@@ -296,7 +309,7 @@ class Digester extends \Phigester\AbstractExpatParser {
 
         try {
            $rule->end();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
           $this->logger->error('End event threw exception'
               . $exception->getMessage());
           throw $exception;
@@ -311,7 +324,7 @@ class Digester extends \Phigester\AbstractExpatParser {
     } else {
       $this->match = substr($this->match, 0, $slash);
     }
-    
+
     if ($this->indentLogger != '') $this->indentLogger
         = substr($this->indentLogger, 4);
   }
@@ -324,11 +337,12 @@ class Digester extends \Phigester\AbstractExpatParser {
    * @param string $pattern Element matching pattern
    * @param Rule $rule The rule to be registered
    */
-  public function addRule($pattern, \Phigester\Rule $rule) {
+  public function addRule($pattern, \Phigester\AbstractRule $rule)
+  {
     $rules = $this->getRules();
     $rules->add($pattern, $rule);
   }
-  
+
   /**
    * Add a "factory create" rule for the specified parameters.
    *
@@ -350,7 +364,8 @@ class Digester extends \Phigester\AbstractExpatParser {
    * @param string $attributeName Attribute name that optionally overrides
    * the default PHP class name to be created
    */
-  public function addObjectCreate($pattern, $className, $attributeName = '') {
+  public function addObjectCreate($pattern, $className, $attributeName = '')
+  {
     $rule = new \Phigester\ObjectCreateRule($className, $attributeName);
     $this->addRule($pattern, $rule);
   }
@@ -364,7 +379,8 @@ class Digester extends \Phigester\AbstractExpatParser {
    * @param string $value The attribute name containing the property value to
    * set
    */
-  public function addSetProperty($pattern, $name, $value = '') {
+  public function addSetProperty($pattern, $name, $value = '')
+  {
     $rule = new \Phigester\SetPropertyRule($name, $value);
     $this->addRule($pattern, $rule);
   }
@@ -388,14 +404,15 @@ class Digester extends \Phigester\AbstractExpatParser {
    * @param string $pattern Element matching pattern
    * @param string $methodName Method name to call on the parent element
    */
-  public function addSetNext($pattern, $methodName) {
+  public function addSetNext($pattern, $methodName)
+  {
     $rule = new \Phigester\SetNextRule($methodName);
     $this->addRule($pattern, $rule);
   }
 
   /**
    * Add a "call method" rule for the specified parameters
-   * 
+   *
    * If paramCount is set to zero the rule will use the body of the matched
    * element as the single argument of the method, unless paramTypes is null
    * or empty, in this case the rule will call the specified method with
@@ -413,7 +430,7 @@ class Digester extends \Phigester\AbstractExpatParser {
     $rule = new \Phigester\CallMethodRule(0, $methodName, $paramCount, $paramTypes);
     $this->addRule($pattern, $rule);
   }
-  
+
   /**
    * Add a "call parameter" rule for the specified parameters
    *
@@ -434,22 +451,24 @@ class Digester extends \Phigester\AbstractExpatParser {
         , $stackIndex);
     $this->addRule($pattern, $rule);
   }
-  
+
   /**
    * Register a set of Rule instances defined in a RuleSet
    *
-   * @param \Phigester\RuleSet $ruleSet The RuleSet instance to configure from
+   * @param \Phigester\RulesSetInterface $ruleSet The RuleSet instance to configure from
    */
-  public function addRuleSet(\Phigester\RuleSet $ruleSet) {
+  public function addRuleSet(\Phigester\RulesSetInterface $ruleSet)
+  {
     $ruleSet->addRuleInstances($this);
   }
-  
+
   /**
    * Push a new object onto the top of the object stack
    *
    * @param object The new object
    */
-  public function push($object) {
+  public function push($object)
+  {
     if (count($this->stack) == 0) {
       $this->root = $object;
     }
@@ -463,7 +482,8 @@ class Digester extends \Phigester\AbstractExpatParser {
    *
    * @return object
    */
-  public function pop() {
+  public function pop()
+  {
     $object = array_pop($this->stack);
     if (is_null($object))
       $this->logger->warn('Empty stack (returning null)');
@@ -481,7 +501,8 @@ class Digester extends \Phigester\AbstractExpatParser {
    * stack, 1 is the next element down, and so on
    * @return object
    */
-  public function peek($n = 0) {
+  public function peek($n = 0)
+  {
     // Emulate a stack behavour
     $tos = count($this->stack) - 1;   // last item pushed onto the stack
     $ix = $tos - $n;                  // required stack index
@@ -501,23 +522,25 @@ class Digester extends \Phigester\AbstractExpatParser {
    *
    * @return integer
    */
-  public function getCount() {
+  public function getCount()
+  {
     return count($this->stack);
   }
 
   /**
    * Clear the current contents of the object stack
    */
-  public function clear() {
+  public function clear()
+  {
     $this->match = '';
     $this->bodyTexts = array();
     $this->stack = array();
   }
-  
+
   /**
    * Return the n'th object down the parameters stack, where 0 is the top
    * element and [count()-1] is the bottom element
-   * 
+   *
    * If the specified index is out of range, return null. The parameters stack
    * is used to store CallMethodRule parameters.
    *
@@ -535,36 +558,37 @@ class Digester extends \Phigester\AbstractExpatParser {
     if (array_key_exists($ix, $this->params)) {
       $object = &$this->params[$ix];   // [0] is top-of-stack index
     }
-    
+
     if (is_null($object)) $this->logger->warn('Empty stack (returning null)');
     return $object;
   }
-  
+
   /**
    * Pop the top object off of the parameters stack, and return it
-   * 
+   *
    * If the are no objects on the stack, return null. The parameters stack
    * is used to store CallMethodRule parameters.
    *
    * @return object
    */
-  public function popParams() {
+  public function popParams()
+  {
     $object = array_pop($this->params);
     if (is_null($object))
       $this->logger->warn('Empty stack (returning null)');
 
     return $object;
   }
-  
+
   /**
    * Push a new object onto the top of the parameters stack
-   * 
+   *
    * The parameters stack is used to store CallMethodRule parameters.
    *
    * @param object $object The new object
    */
-  public function pushParams($object) {
+  public function pushParams($object)
+  {
     $this->params[] = $object;
   }
 }
-?>

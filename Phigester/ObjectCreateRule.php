@@ -11,7 +11,8 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class ObjectCreateRule extends \Phigester\Rule {
+class ObjectCreateRule extends \Phigester\AbstractRule
+{
   /**
    * The attribute containing an override class name if it is present
    *
@@ -34,7 +35,8 @@ class ObjectCreateRule extends \Phigester\Rule {
    * @param string $attributeName Attribute name which, if present, contains
    * an override of the class name to create.
    */
-  public function __construct($className, $attributeName = null) {
+  public function __construct($className, $attributeName = null)
+  {
     $this->className = (string) $className;
     if (!is_null($attributeName)) $this->attributeName
         = (string) $attributeName;
@@ -46,7 +48,8 @@ class ObjectCreateRule extends \Phigester\Rule {
    * @param array $attributes The attribute list of this element
    * @throws \Exception
    */
-  public function begin(array $attributes) {
+  public function begin(array $attributes)
+  {
     //Identify the name of the class to instantiate
     $realClassName = $this->className;
 
@@ -68,16 +71,17 @@ class ObjectCreateRule extends \Phigester\Rule {
     } catch (\Exception $exception) {
       throw $exception;
     }
-    
+
     //Instantiate the new object an push it on the context stack
-    $object = new $className;
+    $object = new $className();
     $this->digester->push($object);
   }
 
   /**
    * Process the end of this element
    */
-  public function end() {
+  public function end()
+  {
     $top = $this->digester->pop();
 
     $logger = $this->digester->getLogger();
@@ -92,10 +96,11 @@ class ObjectCreateRule extends \Phigester\Rule {
    *
    * @return string
    */
-  public function toString() {
+  public function toString()
+  {
     $sb = 'ObjectCreateRule[className=' . $this->className;
     $sb .= ', attributeName=' . $this->attributeName . ']';
+
     return $sb;
   }
 }
-?>

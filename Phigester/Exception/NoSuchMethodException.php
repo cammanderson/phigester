@@ -8,6 +8,6 @@ namespace Phigester\Exception;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class NoSuchMethodException extends \Exception {
+class NoSuchMethodException extends \Exception
+{
 }
-?>

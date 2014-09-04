@@ -9,7 +9,8 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class SetPropertyRule extends \Phigester\Rule {
+class SetPropertyRule extends \Phigester\AbstractRule
+{
   /**
    * The attribute that will contain the property name
    *
@@ -33,7 +34,8 @@ class SetPropertyRule extends \Phigester\Rule {
    * @param string $value The name of the attribute that will contain the value
    * to which the property should be set
    */
-  public function __construct($name, $value) {
+  public function __construct($name, $value)
+  {
     $this->name = (string) $name;
     $this->value = (string) $value;
   }
@@ -45,7 +47,8 @@ class SetPropertyRule extends \Phigester\Rule {
    * @throws \Phigester\Exception\NoSuchPropertyException - If the bean does not have
    * a writeable property of the specified name
    */
-  public function begin($attributes) {
+  public function begin($attributes)
+  {
     // Identify the actual property name and value to be used
     $actualName = '';
     $actualValue = '';
@@ -56,10 +59,10 @@ class SetPropertyRule extends \Phigester\Rule {
         $actualValue = $attribValue;
       }
     }
-    
+
     // Get a reference to the top object
     $top = $this->digester->peek();
-    
+
     // Log some debugging information
     $logger = $this->digester->getLogger();
     $indentLogger = $this->digester->getIndentLogger();
@@ -92,13 +95,15 @@ class SetPropertyRule extends \Phigester\Rule {
    *
    * @return string
    */
-  public function toString() {
+  public function toString()
+  {
     $sb  = 'SetPropertyRule[';
     $sb .= 'name=';
     $sb .= $this->name;
     $sb .= ', value=';
     $sb .= $this->value;
     $sb .= ']';
+
     return $sb;
   }
 }

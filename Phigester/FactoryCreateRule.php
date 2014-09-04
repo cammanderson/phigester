@@ -4,7 +4,7 @@ namespace Phigester;
 /**
  * Rule implementation that uses an \Phigester\ObjectCreationFactory to create
  * a new object which it pushes onto the object stack.
- * 
+ *
  * <p>When the element is complete, the object will be popped.</p>
  * <p>This rule is intented in situations where the element's attributes
  * are needed before the object can be created. A common scenario is for
@@ -16,7 +16,8 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-class FactoryCreateRule extends \Phigester\Rule {
+class FactoryCreateRule extends \Phigester\AbstractRule
+{
   /**
    * The object creation factory we will use to instantiate objects as required
    * based on the attributes specified in the matched XML element.
@@ -24,18 +25,20 @@ class FactoryCreateRule extends \Phigester\Rule {
    * @var \Phigester\ObjectCreationFactory
    */
   protected $creationFactory = null;
-  
-  public function __construct(\Phigester\ObjectCreationFactory $creationFactory) {
+
+  public function __construct(\Phigester\ObjectCreationFactory $creationFactory)
+  {
     $this->creationFactory = $creationFactory;
   }
-  
+
   /**
    * Process the beginning of this element.
    *
    * @param array $attributes The attribute list of this element
-   * @throws Exception
+   * @throws \Exception
    */
-  public function begin(array $attributes) {    
+  public function begin(array $attributes)
+  {
     try {
       $instance = $this->creationFactory->createObject($attributes);
 
@@ -43,18 +46,19 @@ class FactoryCreateRule extends \Phigester\Rule {
       $indentLogger = $this->digester->getIndentLogger();
       $match = $this->digester->getMatch();
       $logger->debug($indentLogger . "  [FactoryCreateRule]{" . $match
-          . "} New " . get_class($instance));        
+          . "} New " . get_class($instance));
 
       $this->digester->push($instance);
-    } catch (Exception $exception) {
+    } catch (\Exception $exception) {
       throw $exception;
     }
   }
-  
+
   /**
    * Process the end of this element
    */
-  public function end() {
+  public function end()
+  {
     $top = $this->digester->pop();
 
     $logger = $this->digester->getLogger();
@@ -63,16 +67,17 @@ class FactoryCreateRule extends \Phigester\Rule {
     $logger->debug($indentLogger . "  [FactoryCreateRule]{" . $match
         . "} Pop " . get_class($top));
   }
-  
+
   /**
    * Render a printable version of this Rule
    *
    * @return string
    */
-  public function toString() {
+  public function toString()
+  {
     $sb = 'FactoryCreateRule[creationFactory='
         . get_class($this->creationFactory) . ']';
+
     return $sb;
   }
 }
-?>

@@ -2,8 +2,8 @@
 namespace Phigester;
 
 /**
- * \Phigester\RuleSet
- * 
+ * \Phigester\RulesSetInterface
+ *
  * Public interface defining a shorthand means of configuring a complete
  * set of related Rule definitions in one operation. To use an instance
  * of a class that implements this interface:
@@ -19,15 +19,15 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-interface RuleSet {
+interface RuleSet
+{
   /**
    * Add the set of Rule instances defined in this RuleSet to the specified
    * Digester instance.
-   * 
+   *
    * This method should only be called by a Digester instance.
    * @param \Phigester\Digester $digester Digester intance to which the new Rule
    * instances should be added.
    */
   public function addRuleInstances(\Phigester\Digester $digester);
 }
-?>

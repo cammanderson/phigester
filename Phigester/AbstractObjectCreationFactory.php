@@ -17,24 +17,25 @@ abstract class AbstractObjectCreationFactory
    * @var \Phigester\Digester
    */
   protected $digester = null;
-    
+
   /**
    * Returns the \Phigester\Digester that was set by the \Phigester\FactoryCreateRule
    * upon initialization.
-   * 
+   *
    * @return \Phigester\Digester
    */
-  public function getDigester() {
+  public function getDigester()
+  {
     return $this->digester;
   }
-  
+
   /**
    * Set the \Phigester\Digester.
    *
    * @param \Phigester\Digester $digester Parent digester object
    */
-  public function setDigester(\Phigester\Digester $digester) {
+  public function setDigester(\Phigester\Digester $digester)
+  {
     $this->digester = $digester;
   }
 }
-?>

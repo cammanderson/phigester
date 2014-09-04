@@ -6,20 +6,21 @@ namespace Phigester;
  *
  * This class represents an XML parser. It is an abstract class that must be
  * implemented by the real parser that must extend this class.
- * 
+ *
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  * @author Yannick Lecaillez <yl@seasonfive.com>
  * @author Andreas Aderhold <andi@binarycloud.com>
  */
-abstract class AbstractXMLParser {
+abstract class AbstractXMLParser
+{
   /**
    * Internal XML parser object
-   * 
+   *
    * @var object
    */
   protected $parser = null;
-  
+
   /**
    * Sets options for PHP internal parser
    *
@@ -29,7 +30,7 @@ abstract class AbstractXMLParser {
    * @param mixed $val
    */
   abstract public function parserSetOption($opt, $val);
-  
+
   /**
    * Method that gets invoked when the parser runs over a XML start element
    *
@@ -44,7 +45,7 @@ abstract class AbstractXMLParser {
    * @throws Exception
    */
   abstract public function startElementHandler($parser, $name, $attribs);
-  
+
   /**
    * Method that gets invoked when the parser runs over a XML close element
    *
@@ -58,7 +59,7 @@ abstract class AbstractXMLParser {
    * @throws Exception
    */
   abstract public function endElementHandler($parser, $name);
-  
+
   /**
    * Method that gets invoked when the parser runs over CDATA
    *
@@ -72,7 +73,7 @@ abstract class AbstractXMLParser {
    * @throws Exception
    */
   abstract public function characterDataHandler($parser, $data);
-  
+
   /**
    * Entrypoint for parser
    *
@@ -83,4 +84,3 @@ abstract class AbstractXMLParser {
    */
   abstract public function parse($xmlFile);
 }
-?>

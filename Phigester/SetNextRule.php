@@ -12,7 +12,8 @@ namespace Phigester;
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
 
  */
-class SetNextRule extends \Phigester\Rule {
+class SetNextRule extends \Phigester\AbstractRule
+{
   /**
    * The method name to call on the parent object
    *
@@ -25,14 +26,16 @@ class SetNextRule extends \Phigester\Rule {
    *
    * @param string $methodName The method name of the parent method to call
    */
-  public function __construct($methodName) {
+  public function __construct($methodName)
+  {
     $this->methodName  = (string) $methodName;
   }
 
   /**
    * Process the end of this element
    */
-  public function end() {
+  public function end()
+  {
     // Identify the objects to be used
     $child = $this->digester->peek(0);
     $parent = $this->digester->peek(1);
@@ -40,7 +43,7 @@ class SetNextRule extends \Phigester\Rule {
     $logger = $this->digester->getLogger();
     $indentLogger = $this->digester->getIndentLogger();
     $match = $this->digester->getMatch();
-    
+
     if (is_null($parent)) {
       $logger->debug($indentLogger . '  [SetNextRule]{' . $match
           . '} Call [NULL PARENT]->' . $this->methodName . '('
@@ -68,12 +71,13 @@ class SetNextRule extends \Phigester\Rule {
    *
    * @return string
    */
-  public function toString() {
+  public function toString()
+  {
     $sb = 'SetNextRule[';
     $sb .= 'methodName=';
     $sb .= $this->methodName;
     $sb .= ']';
-    return $sb;       
+
+    return $sb;
   }
 }
-?>
