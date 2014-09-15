@@ -82,7 +82,7 @@ class SetPropertiesRule extends \Phigester\AbstractRule
      *
      * @param array $attributes The attribute list of this element
      */
-    public function begin($attributes)
+    public function begin(array $attributes)
     {
         $logger = $this->digester->getLogger();
         $indentLogger = $this->digester->getIndentLogger();
@@ -114,7 +114,7 @@ class SetPropertiesRule extends \Phigester\AbstractRule
                 $n++;
             }
 
-            $logger->debug(
+            if(!empty($logger)) $loggerdebug(
                 $indentLogger . '  [SetPropertiesRule]{' . $match
                 . '} Setting property "' . $name . '" to "' . $xmlAttribValue . '"'
             );
@@ -146,7 +146,7 @@ class SetPropertiesRule extends \Phigester\AbstractRule
 
         // Populate the corresponding properties of the top object
         $top = $this->digester->peek();
-        $logger->debug(
+        if(!empty($logger)) $loggerdebug(
             $indentLogger . '  [SetPropertiesRule]{' . $match
             . '} Set ' . get_class($top) . ' properties'
         );

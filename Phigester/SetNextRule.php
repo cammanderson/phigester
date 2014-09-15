@@ -44,13 +44,13 @@ class SetNextRule extends \Phigester\AbstractRule
         $match = $this->digester->getMatch();
 
         if (is_null($parent)) {
-            $logger->debug(
+            if(!empty($logger)) $loggerdebug(
                 $indentLogger . '  [SetNextRule]{' . $match
                 . '} Call [NULL PARENT]->' . $this->methodName . '('
                 . get_class($child) . ')'
             );
         } else {
-            $logger->debug(
+            if(!empty($logger)) $loggerdebug(
                 $indentLogger . '  [SetNextRule]{' . $match
                 . '} Call ' . get_class($parent) . '->' . $this->methodName . '('
                 . get_class($child) . ')'

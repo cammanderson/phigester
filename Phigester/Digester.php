@@ -90,7 +90,7 @@ class Digester extends \Phigester\AbstractExpatParser
         //Call the ExpatParser constructor first
         parent::__construct();
 
-//    $this->logger = LoggerManager::getLogger(
+//    if(!empty($this->logger)) $this->logger = LoggerManager::getLogger(
 //        'Phigester.' . __CLASS__);
     }
 
@@ -174,7 +174,7 @@ class Digester extends \Phigester\AbstractExpatParser
      */
     public function parse($xmlFile)
     {
-        $this->logger->debug(
+        if(!empty($this->logger)) $this->logger->debug(
             '---------- START PARSING "' . $xmlFile
             . '" ----------'
         );
@@ -185,7 +185,7 @@ class Digester extends \Phigester\AbstractExpatParser
         } catch (\Phigester\Exception\ExpatParserException $exception) {
             throw $exception;
         }
-        $this->logger->debug(
+        if(!empty($this->logger)) $this->logger->debug(
             '---------- END PARSING "' . $xmlFile
             . '" ----------'
         );
@@ -207,8 +207,8 @@ class Digester extends \Phigester\AbstractExpatParser
         if ($this->match != '') {
             $this->indentLogger .= str_repeat(' ', 4);
         }
-        $this->logger->debug($this->indentLogger . 'startElement(' . $name . ')');
-        $this->logger->debug(
+        if(!empty($this->logger)) $this->logger->debug($this->indentLogger . 'startElement(' . $name . ')');
+        if(!empty($this->logger)) $this->logger->debug(
             $this->indentLogger . '  Pushing body text "'
             . $this->bodyText . '"'
         );
@@ -223,7 +223,7 @@ class Digester extends \Phigester\AbstractExpatParser
         $sb .= $name;
         $this->match = $sb;
 
-        $this->logger->debug(
+        if(!empty($this->logger)) $this->logger->debug(
             $this->indentLogger . '  New match="' . $this->match
             . '"'
         );
@@ -233,7 +233,7 @@ class Digester extends \Phigester\AbstractExpatParser
 
         if (count($rules) > 0) {
             foreach ($rules as $rule) {
-                $this->logger->debug(
+                if(!empty($this->logger)) $this->logger->debug(
                     $this->indentLogger . '  Fire begin() for '
                     . $rule->toString() . ' - Pattern : ' . $this->match
                 );
@@ -241,7 +241,7 @@ class Digester extends \Phigester\AbstractExpatParser
                 try {
                     $rule->begin($attribs);
                 } catch (\Exception $exception) {
-                    $this->logger->error(
+                    if(!empty($this->logger)) $this->logger->error(
                         'Begin event threw exception : '
                         . $exception->getMessage()
                     );
@@ -249,7 +249,7 @@ class Digester extends \Phigester\AbstractExpatParser
                 }
             }
         } else {
-            $this->logger->debug(
+            if(!empty($this->logger)) $this->logger->debug(
                 $this->indentLogger . '  No rules found matching "'
                 . $this->match . '"'
             );
@@ -268,7 +268,7 @@ class Digester extends \Phigester\AbstractExpatParser
         $data = trim($data);
 
         if ($data != '') {
-            $this->logger->debug($this->indentLogger . 'characters(' . $data . ')');
+            if(!empty($this->logger)) $this->logger->debug($this->indentLogger . 'characters(' . $data . ')');
         }
 
         // Append these data characters at the end of the bodyText buffer
@@ -284,11 +284,11 @@ class Digester extends \Phigester\AbstractExpatParser
      */
     public function endElementHandler($parser, $name)
     {
-        $this->logger->debug(
+        if(!empty($this->logger)) $this->logger->debug(
             $this->indentLogger . '  match="'
             . $this->match . '"'
         );
-        $this->logger->debug(
+        if(!empty($this->logger)) $this->logger->debug(
             $this->indentLogger . '  bodyText="'
             . $this->bodyText . '"'
         );
@@ -297,7 +297,7 @@ class Digester extends \Phigester\AbstractExpatParser
         $rules = $this->getRules()->match($this->match);
         if (count($rules) > 0) {
             foreach ($rules as $rule) {
-                $this->logger->debug(
+                if(!empty($this->logger)) $this->logger->debug(
                     $this->indentLogger . '  Fire body() for '
                     . $rule->toString()
                 );
@@ -305,7 +305,7 @@ class Digester extends \Phigester\AbstractExpatParser
                 try {
                     $rule->body($this->bodyText);
                 } catch (\Exception $exception) {
-                    $this->logger->error(
+                    if(!empty($this->logger)) $this->logger->error(
                         'Body event threw exception'
                         ,
                         $exception->getMessage()
@@ -314,17 +314,17 @@ class Digester extends \Phigester\AbstractExpatParser
                 }
             }
         } else {
-            $this->logger->debug(
+            if(!empty($this->logger)) $this->logger->debug(
                 $this->indentLogger . '  No rules found matching "'
                 . $this->match . '"'
             );
         }
 
-        $this->logger->debug($this->indentLogger . 'endElement(' . $name . ')');
+        if(!empty($this->logger)) $this->logger->debug($this->indentLogger . 'endElement(' . $name . ')');
 
         // Recover the body text from the surrounding element
         $this->bodyText = array_pop($this->bodyTexts);
-        $this->logger->debug(
+        if(!empty($this->logger)) $this->logger->debug(
             $this->indentLogger . '  Popping body text "'
             . $this->bodyText . '"'
         );
@@ -334,7 +334,7 @@ class Digester extends \Phigester\AbstractExpatParser
             $rulesReverse = array_reverse($rules, true);
 
             foreach ($rulesReverse as $rule) {
-                $this->logger->debug(
+                if(!empty($this->logger)) $this->logger->debug(
                     $this->indentLogger . '  Fire end() for '
                     . $rule->toString()
                 );
@@ -342,7 +342,7 @@ class Digester extends \Phigester\AbstractExpatParser
                 try {
                     $rule->end();
                 } catch (\Exception $exception) {
-                    $this->logger->error(
+                    if(!empty($this->logger)) $this->logger->error(
                         'End event threw exception'
                         . $exception->getMessage()
                     );
@@ -507,9 +507,9 @@ class Digester extends \Phigester\AbstractExpatParser
     /**
      * Register a set of Rule instances defined in a RuleSet
      *
-     * @param \Phigester\RulesSetInterface $ruleSet The RuleSet instance to configure from
+     * @param \Phigester\RuleSetInterface $ruleSet The RuleSet instance to configure from
      */
-    public function addRuleSet(\Phigester\RulesSetInterface $ruleSet)
+    public function addRuleSet(\Phigester\RuleSetInterface $ruleSet)
     {
         $ruleSet->addRuleInstances($this);
     }
@@ -537,8 +537,12 @@ class Digester extends \Phigester\AbstractExpatParser
     public function pop()
     {
         $object = array_pop($this->stack);
-        if (is_null($object))
-            $this->logger->warn('Empty stack (returning null)');
+        if (is_null($object)) {
+            if(!empty($this->logger)) {
+                $this->logger->warn('Empty stack (returning null)');
+            }
+        }
+
 
         return $object;
     }
@@ -565,7 +569,11 @@ class Digester extends \Phigester\AbstractExpatParser
             $object = $this->stack[$ix]; // [0] is top-of-stack index
         }
 
-        if (is_null($object)) $this->logger->warn('Empty stack (returning null)');
+        if (is_null($object)) {
+            if(!empty($this->logger)) {
+                $this->logger->warn('Empty stack (returning null)');
+            }
+        }
         return $object;
     }
 
@@ -612,7 +620,7 @@ class Digester extends \Phigester\AbstractExpatParser
             $object = & $this->params[$ix]; // [0] is top-of-stack index
         }
 
-        if (is_null($object)) $this->logger->warn('Empty stack (returning null)');
+        if (is_null($object)) if(!empty($this->logger)) $this->logger->warn('Empty stack (returning null)');
         return $object;
     }
 
@@ -628,7 +636,7 @@ class Digester extends \Phigester\AbstractExpatParser
     {
         $object = array_pop($this->params);
         if (is_null($object))
-            $this->logger->warn('Empty stack (returning null)');
+            if(!empty($this->logger)) $this->logger->warn('Empty stack (returning null)');
 
         return $object;
     }

@@ -45,7 +45,7 @@ class FactoryCreateRule extends \Phigester\AbstractRule
             $logger = $this->digester->getLogger();
             $indentLogger = $this->digester->getIndentLogger();
             $match = $this->digester->getMatch();
-            $logger->debug(
+            if(!empty($logger)) $loggerdebug(
                 $indentLogger . "  [FactoryCreateRule]{" . $match
                 . "} New " . get_class($instance)
             );
@@ -66,7 +66,7 @@ class FactoryCreateRule extends \Phigester\AbstractRule
         $logger = $this->digester->getLogger();
         $indentLogger = $this->digester->getIndentLogger();
         $match = $this->digester->getMatch();
-        $logger->debug(
+        if(!empty($logger)) $loggerdebug(
             $indentLogger . "  [FactoryCreateRule]{" . $match
             . "} Pop " . get_class($top)
         );

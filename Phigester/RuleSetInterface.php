@@ -2,7 +2,7 @@
 namespace Phigester;
 
 /**
- * \Phigester\RulesSetInterface
+ * \Phigester\RuleSetInterface
  *
  * Public interface defining a shorthand means of configuring a complete
  * set of related Rule definitions in one operation. To use an instance

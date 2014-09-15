@@ -47,7 +47,7 @@ class SetPropertyRule extends \Phigester\AbstractRule
      * @throws \Phigester\Exception\NoSuchPropertyException - If the bean does not have
      *                                                                 a writeable property of the specified name
      */
-    public function begin($attributes)
+    public function begin(array $attributes)
     {
         // Identify the actual property name and value to be used
         $actualName = '';
@@ -67,7 +67,7 @@ class SetPropertyRule extends \Phigester\AbstractRule
         $logger = $this->digester->getLogger();
         $indentLogger = $this->digester->getIndentLogger();
         $match = $this->digester->getMatch();
-        $logger->debug(
+        if(!empty($logger)) $loggerdebug(
             $indentLogger . '  [SetPropertyRule]{' . $match . '} Set '
             . get_class($top) . ' property ' . $actualName . ' to ' . $actualValue
         );

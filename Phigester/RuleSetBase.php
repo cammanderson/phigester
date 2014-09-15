@@ -11,6 +11,6 @@ namespace Phigester;
  * @author Olivier Henry <oliv.henry@gmail.com> (PHP5 port)
  * @author John C. Wildenauer <freed001@gmail.com> (PHP4 port)
  */
-abstract class RuleSetBase implements \Phigester\RulesSetInterface
+abstract class RuleSetBase implements RuleSetInterface
 {
 }
