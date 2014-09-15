@@ -64,7 +64,7 @@ class ObjectCreateRule extends \Phigester\AbstractRule
         $logger = $this->digester->getLogger();
         $indentLogger = $this->digester->getIndentLogger();
         $match = $this->digester->getMatch();
-        $logger->debug(
+        if(!empty($logger)) $loggerdebug(
             $indentLogger . '  [ObjectCreateRule]{' . $match
             . '} New ' . $realClassName
         );
@@ -91,7 +91,7 @@ class ObjectCreateRule extends \Phigester\AbstractRule
         $logger = $this->digester->getLogger();
         $indentLogger = $this->digester->getIndentLogger();
         $match = $this->digester->getMatch();
-        $logger->debug(
+        if(!empty($logger)) $loggerdebug(
             $indentLogger . "  [ObjectCreateRule]{" . $match
             . "} Pop " . get_class($top)
         );

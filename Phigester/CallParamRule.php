@@ -97,7 +97,7 @@ class CallParamRule extends \Phigester\AbstractRule
             $sb = $indentLogger . '  [CallParamRule]{' . $match;
             $sb .= '} Save from stack; from stack? true';
             $sb .= '; object=' . get_class($param);
-            $logger->debug($sb);
+            if(!empty($logger)) $loggerdebug($sb);
 
         } elseif ($this->attributeName != '') {
             if (array_key_exists($this->attributeName, $attributes)) {

@@ -146,12 +146,12 @@ class CallMethodRule extends \Phigester\AbstractRule
 
             foreach ($parameters as $i => $parameter) {
                 if (is_object($parameter)) {
-                    $logger->debug(
+                    if(!empty($logger)) $loggerdebug(
                         $indentLogger . '  [CallMethodRule](' . $i . ')'
                         . get_class($parameter)
                     );
                 } else {
-                    $logger->debug(
+                    if(!empty($logger)) $loggerdebug(
                         $indentLogger . '  [CallMethodRule](' . $i . ')'
                         . $parameter
                     );
@@ -258,7 +258,7 @@ class CallMethodRule extends \Phigester\AbstractRule
             $sb .= '/' . $this->paramTypes[$i];
         }
         $sb .= ')';
-        $logger->debug($sb);
+        if(!empty($logger)) $loggerdebug($sb);
 
         if (method_exists($target, $this->methodName)) {
             $result = call_user_func_array(
